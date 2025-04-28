@@ -13,6 +13,13 @@ wait_for_unoserver() {
 export PS1='\u@\h:\w\$ '
 
 echo "using: $(libreoffice --version)"
+if [ $START_REST_API = "true" ]; then
+    echo "And starting REST API"
+    /usr/bin/python /rest-service/server.py
+    # export SUPERVISOR_INTERACTIVE_CONF='/rest-service/supervisord.conf'
+    # supervisord -c "$SUPERVISOR_INTERACTIVE_CONF"
+
+fi;
 
 # if tty then assume that container is interactive
 if [ ! -t 0 ]; then

@@ -1,0 +1,7 @@
+services:
+  unoserver:
+    build:
+      context: .
+      args:
+        - VERSION_UNOSERVER=${VERSION_UNOSERVER}
+        - ADD_REST_API=${ADD_REST_API:-false}

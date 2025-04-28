@@ -1,10 +1,13 @@
 FROM --platform=$BUILDPLATFORM eclipse-temurin:24_36-jdk-alpine
 
 ARG BUILD_CONTEXT="build-context"
+
 ARG UID=worker
 ARG GID=worker
 # renovate: pypi: unoserver
 ARG VERSION_UNOSERVER=3.2
+
+ARG ADD_REST_API=false
 
 LABEL org.opencontainers.image.title="unoserver-docker"
 LABEL org.opencontainers.image.description="Container image that contains unoserver and libreoffice including large set of fonts for file format conversions"
@@ -51,6 +54,9 @@ RUN chmod +x entrypoint.sh && \
     #    mkdir -p /var/run && \
     chown -R ${UID}:0 /run && \
     chmod -R g=u /run
+
+RUN if [ "true" = "$ADD_REST_API" ] ; then  pip install --break-system-packages -U flask gunicorn ; else echo "remove" && rm -rf /rest-service ; fi
+ENV START_REST_API=${ADD_REST_API}
 
 USER ${UID}
 WORKDIR /home/worker
