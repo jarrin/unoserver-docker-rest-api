@@ -6,8 +6,8 @@ ARG UID=worker
 ARG GID=worker
 # renovate: pypi: unoserver
 ARG VERSION_UNOSERVER=3.2
-
-ARG ADD_REST_API=false
+ENV VERSION_UNOSERVER=${VERSION_UNOSERVER}
+ARG ENABLE_REST_API=false
 
 LABEL org.opencontainers.image.title="unoserver-docker"
 LABEL org.opencontainers.image.description="Container image that contains unoserver and libreoffice including large set of fonts for file format conversions"
@@ -55,8 +55,9 @@ RUN chmod +x entrypoint.sh && \
     chown -R ${UID}:0 /run && \
     chmod -R g=u /run
 
-RUN if [ "true" = "$ADD_REST_API" ] ; then  pip install --break-system-packages -U flask gunicorn ; else echo "remove" && rm -rf /rest-service ; fi
-ENV START_REST_API=${ADD_REST_API}
+# Only install if the REST API is enabled
+RUN if [ "true" = "$ENABLE_REST_API" ] ; then  pip install --break-system-packages -U flask gunicorn flask-caching python-magic && apk add --no-cache libmagic ; else rm -rf /rest-service ; fi
+ENV START_REST_API=${ENABLE_REST_API}
 
 USER ${UID}
 WORKDIR /home/worker

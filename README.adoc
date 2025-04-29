@@ -65,6 +65,32 @@ NOTE: You must use `--host-location` otherwise unoconvert will default to local 
 ----
 unoconvert --host-location remote example.docx example.pdf
 ----
+== Using the REST API service
+
+First, build the image with the argument ENABLE_REST_API set to true, or set it in the docker-compose.yml file.
+
+At run time you can set the REST_API_KEY environment variable to a random string. The rest API service will check it against the x-api-key header.
+It's not mandatory, but don't expose the port to the internet in that case.
+
+The API wil be exposed at port 8000, as of now only the /convert endpoint exists.
+
+=== /convert
+Method: Post
+
+Example:
+[source,json]
+----
+{
+    "data": "<base64 string without the mimetype and base664 identifier>",
+    "convert_from": "docx/doc",
+    "convert_to": "pdf/html",
+    "write_to": "stream/base64/file_path",
+    "bust": true,
+    "overwrite": true
+}
+
+----
+
 == FAQ
 
 Q. Why do I get an error during when converting is writing/exporting to file?

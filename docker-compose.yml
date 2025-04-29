@@ -1,7 +1,18 @@
 services:
   unoserver:
+    container_name: unoserver
+    stdin_open: true
+    tty: true
+    command: /bin/bash
     build:
       context: .
       args:
         - VERSION_UNOSERVER=${VERSION_UNOSERVER}
-        - ADD_REST_API=${ADD_REST_API:-false}
+        - ENABLE_REST_API=${ENABLE_REST_API:-false}
+    env_file: .env
+    volumes:
+      - ./build-context/rest-service/test.py:/rest-service/test.py
+      - ./build-context/rest-service:/rest-service
+      - ../data:/data:z
+    ports:
+      - 7654:8000
